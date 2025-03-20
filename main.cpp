@@ -3,6 +3,7 @@
 #include "pin.H"
 #include <memory>
 #include <stdio.h>
+#include <unistd.h>
 
 int numThreads = 0;
 
@@ -23,7 +24,7 @@ ThreadTracerData* initThreadTracerData(THREADID tid){
   tdata->tid = tid;
   tdata->trace = fopen(("thread_" + std::to_string(tid) + ".trace").c_str(), "w+");
   tdata->numInstrSinceLastMem = 0;
-  tdata->inRoi = true; //todo mod
+  tdata->inRoi = false; 
   return tdata;
 }
 //destroy per thread data
@@ -153,8 +154,9 @@ const CHAR* ROI_END   = "__end_pin_roi";
 VOID beginRoi(){
   THREADID tid = PIN_ThreadId();
   ThreadTracerData* tdata = static_cast<ThreadTracerData*>(PIN_GetThreadData(tls_key, tid));
-  tdata->inRoi = true; 
   std::cout << "Thread " << tid << " begining Roi" << std::endl;
+  fprintf(tdata->trace, "BeginRoi\n");
+  tdata->inRoi = true; 
 }
 /* end the roi. This also flushes the threads file data in case of a crash*/
 VOID endRoi(){
@@ -165,8 +167,9 @@ VOID endRoi(){
   //flush the file
   fflush(tdata->trace);
   fsync(fileno(tdata->trace)); //not sure this one is needed
-  tdata->inRoi = true;
   std::cout << "Thread " << tid << " leaving Roi" << std::endl;
+  fprintf(tdata->trace, "EndRoi\n");
+  tdata->inRoi = false;
 }
 /* checks for the ROI_BEGIN. if so, instrument with beginRoi */
 static VOID checkForRoiStart(RTN rtn, VOID *)
