@@ -14,8 +14,8 @@ const char* __attribute__((noinline)) __begin_pin_roi(const char *s, int *beg, i
 const char* __attribute__((noinline)) __end_pin_roi(const char *s, int *beg, int *end);
 
 #if (PIN_ENABLED==1)
-  #define BEGIN_PIN_ROI __begin_pin_roi(new char[5], new int, new int);
-  #define END_PIN_ROI __end_pin_roi(new char[5], new int, new int);
+  #define BEGIN_PIN_ROI __begin_pin_roi((char*)malloc(5), (int*)malloc(sizeof(int)), (int*)malloc(sizeof(int)));
+  #define END_PIN_ROI __end_pin_roi((char*)malloc(5), (int*)malloc(sizeof(int)), (int*)malloc(sizeof(int)));
 #else
   #define BEGIN_PIN_ROI
   #define END_PIN_ROI

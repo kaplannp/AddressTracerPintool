@@ -1,6 +1,6 @@
 #include "pinRoi.h"
 #include <stdlib.h>
-#include <cstring>
+#include <string.h>
 const char* __attribute__((noinline)) __begin_pin_roi(const char *s, int *beg, int *end)
 {
     const char *colon = strrchr(s, ':');
